@@ -1,0 +1,79 @@
+﻿@model Tenta.Models.Customer.CustomerVM
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+
+<div class="container shadow rounded-1 text-center py-2 my-5" style="background:#e3e3e37a">
+    <h1><i class="bi-pencil-square" style="color:green"></i> Edit</h1>
+    <hr />
+    <div class="row">
+        <form method="post">
+            <div class="row">
+                <div class="col">
+                    <div class="input-left mb-2">
+                        <label asp-for="Name" class="control-label"></label>
+                    </div>
+                    <input asp-for="Name" type="text" class="form-control" placeholder="Name">
+                </div>
+
+
+                <div class="col">
+                    <div class="input-left mb-2">
+                        <label asp-for="CountryLabel" class="control-label">Country</label>
+                    </div>
+                    <select class="form-select w-80 mb-3" asp-for="CountryLabel" asp-items="@Model.Countries">
+                    </select>
+                    <span asp-validation-for="CountryLabel" style="color:red" class="field-validation-error"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="input-left mb-2">
+                        <label asp-for="Age" class="control-label"></label>
+                    </div>
+                    <input asp-for="Age" type="number" class="form-control" placeholder="Age in years...">
+                    <span asp-validation-for="Age" style="color:red" class="field-validation-error"></span>
+                </div>
+                <div class="col">
+                    <div class="input-left mb-2">
+                        <label asp-for="Birthday" class="control-label"></label>
+                    </div>
+                    <input asp-for="Birthday" type="date" class="form-control" placeholder="Pick your birthday...">
+                    <span asp-validation-for="Birthday" style="color:red" class="field-validation-error"></span>
+                </div>
+            </div>
+
+
+
+            @*Buttons*@
+
+            <div class="d-flex justify-content-center mt-3 mb-2">
+                <div>
+                    <button type="submit"
+                            class="btn btn-success mx-2">
+                        <i class="bi bi-plus-circle-fill"></i> Update
+                    </button>
+                </div>
+
+                <div>
+                    <div class="btn btn-secondary text-center mx-2">
+                        <a asp-action="Customers" class="text-light text-decoration-none"><i class="bi bi-arrow-left-circle"></i> Back</a>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts
+{
+    @{
+        <partial name="_ValidationScriptsPartial"></partial>
+    }
+}
+
+

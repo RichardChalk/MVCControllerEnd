@@ -1,0 +1,41 @@
+﻿@model Tenta.Models.Customer.CustomerVM
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<div class="container shadow rounded-1 text-center py-2 my-5" style="background:#e3e3e37a">
+    <h1><i class="bi bi-trash3" style="color:red"></i> Delete</h1>
+    <hr />
+
+    <h3 style="color:green">@Model.Name</h3>
+
+    <h4>@Model.CountryLabel</h4>
+    <h4>@Model.Age years old</h4>
+    <h4>Birthday: @Model.Birthday.ToShortDateString()</h4>
+
+
+
+    @*Buttons*@
+
+    <form method="post" asp-action="DeleteCustomer">
+        <input asp-for="Id" hidden />
+
+
+        <div class="d-flex justify-content-center  mt-3 mb-2">
+            <div>
+                <button type="submit"
+                        class="btn btn-danger mx-2">
+                    <i class="bi bi-trash3"></i> Delete
+                </button>
+            </div>
+
+            <div>
+                <div class="btn btn-secondary text-center mx-2">
+                    <a asp-action="Customers" class="text-light text-decoration-none"><i class="bi bi-arrow-left-circle"></i> Back</a>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>

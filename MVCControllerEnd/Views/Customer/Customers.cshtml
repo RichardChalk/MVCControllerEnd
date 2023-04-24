@@ -1,0 +1,135 @@
+﻿@model Tenta.Models.Customer.CustomersVM
+
+@{
+    ViewData["Title"] = "Customers";
+}
+
+
+@*Create*@
+
+<section>
+    <div class="container shadow rounded-1 text-center py-2 my-5" style="background:#e3e3e37a">
+        <h1><i class="bi bi-person-plus" style="color: green"></i> Create</h1>
+        <hr />
+        <div class="row">
+            <form method="post">
+                <div class="row">
+                    <div class="col">
+                        <div class="input-left mb-2">
+                            <label asp-for="CustomerCreateDTO.Name" class="control-label"></label>
+                        </div>
+                            <input asp-for="CustomerCreateDTO.Name" type="text" class="form-control" placeholder="Enter your Name...">
+                        <span asp-validation-for="CustomerCreateDTO.Name" style="color:red" class="field-validation-error"></span>
+                    </div>
+                    <div class="col">
+                        <div class="input-left mb-2">
+                            <label asp-for="CustomerCreateDTO.CountryLabel" class="control-label">Country</label>
+                        </div>
+                            <select class="form-select w-80 mb-3" asp-for="CustomerCreateDTO.CountryLabel" asp-items="@Model.Countries">
+                            </select>
+                            <span asp-validation-for="CustomerCreateDTO.CountryLabel" style="color:red" class="field-validation-error"></span>
+                        </div>
+                    </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="input-left mb-2">
+                            <label asp-for="CustomerCreateDTO.Age" class="control-label"></label>
+                        </div>
+                        <input asp-for="CustomerCreateDTO.Age" type="number" class="form-control" placeholder="In years...">
+                        <span asp-validation-for="CustomerCreateDTO.Age" style="color:red" class="field-validation-error"></span>
+                    </div>
+                    <div class="col">
+                        <div class="input-left mb-2">
+                            <label asp-for="CustomerCreateDTO.Birthday" class="control-label"></label>
+                        </div>
+                            <input asp-for="CustomerCreateDTO.Birthday" type="date" class="form-control" placeholder="Pick your birthday...">
+                            <span asp-validation-for="CustomerCreateDTO.Birthday" style="color:red" class="field-validation-error"></span>
+                        </div>
+                    </div>
+
+
+                @*Save button*@
+                <div class="form-group">
+                    <button type="submit"
+                            class="btn btn-success mt-3">
+                        <i class="bi bi-plus-circle-fill"></i> Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    @*Customers list*@
+    <div class="container shadow rounded-1 py-2 mt-5" style="background:#e3e3e37a">
+        <h1 class="text-center"><i class="bi bi-people" style="color:blue"></i> Customers</h1>
+        <hr />
+
+
+        @*Search*@
+        <form asp-controller="Customer" asp-action="Customers" method="get">
+            <div class="input-group mb-3">
+                <div class="input-group-text" style="background-color:green"><i class="bi bi-search text-light"></i></div>
+                <input type="text" class="form-control" placeholder="Search text here..." asp-for="q">
+            </div>
+            <button hidden type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Search</button>
+        </form>
+
+
+
+        @*Customers table*@
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Country
+                    </th>
+                    <th>
+                        Age
+                    </th>
+                    <th>
+                        Birthday
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var customer in Model.Customers)
+                {
+                <tr>
+                    <td width="25">
+                        @Html.DisplayFor(modelItem => customer.Name)
+                    </td>
+                    <td width=25>
+                        @Html.DisplayFor(modelItem => customer.CountryLabel)
+                    </td>
+                    <td width=25>
+                        @Html.DisplayFor(modelItem => customer.Age)
+                    </td>
+                    <td width=25>
+                        @Html.DisplayFor(modelItem => customer.Birthday)
+                    </td>
+
+
+                    <td width="30">
+                        <a asp-action="Edit" asp-controller="Customer" asp-route-id="@customer.Id" class="mx-2"><i class="bi-pencil-square" style="font-size: 1.5rem; color: green;"></i></a>
+                        <a asp-action="Details" asp-controller="Customer" asp-route-id="@customer.Id" class="mx-2"><i class="bi bi-info-square" style="font-size: 1.5rem; color: blue;"></i></a>
+                        <a asp-action="Delete" asp-controller="Customer" asp-route-id="@customer.Id" style="color:red" class="mx-2"><i class="bi bi-trash3" style="font-size: 1.5rem; color: red;"></i></a>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+
+@*@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}*@
+
