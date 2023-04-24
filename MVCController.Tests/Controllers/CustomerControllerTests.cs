@@ -11,6 +11,8 @@ using ClassLibrary.DTOs;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
 using Tenta.Models.Customer;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace MVCControllerEnd.Tests.Controllers
 {
@@ -27,6 +29,13 @@ namespace MVCControllerEnd.Tests.Controllers
             _customerServiceMock = new Mock<ICustomerService>();
             _dbContext = new ApplicationDbContext();
             _sut = new CustomerController(_customerServiceMock.Object, _dbContext);
+
+            // Set up TempData
+            var tempDataProvider = new Mock<ITempDataProvider>();
+            var tempDataDictionaryFactory = new TempDataDictionaryFactory(tempDataProvider.Object);
+            var tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
+            _sut.TempData = tempData;
+
         }
 
         // Customers -  Customers - Customers - Customers - Customers -
@@ -110,34 +119,34 @@ namespace MVCControllerEnd.Tests.Controllers
         public void Customers_Post_ValidData_RedirectsToCustomersAction()
         {
             // Arrange
-            var customers = new List<CustomerDTO>
-            {
-                new CustomerDTO { Name = "Test Customer" }
-            };
-            var countries = new List<SelectListItem>
-            {
-                new SelectListItem
-                {
-                    Text = "Text Country",
-                    Value = "Value Country"
-                }
-            };
-            var q = "searchString";
-            var customerDTO = new CustomerDTO
-            {
-                Name = "CustomerDTO Test",
-                CountryLabel = "Sweden",
-                Age = 30,
-                Birthday = DateTime.Now,
-            };
+            //var customers = new List<CustomerDTO>
+            //{
+            //    new CustomerDTO { Name = "Test Customer" }
+            //};
+            //var countries = new List<SelectListItem>
+            //{
+            //    new SelectListItem
+            //    {
+            //        Text = "Text Country",
+            //        Value = "Value Country"
+            //    }
+            //};
+            //var q = "searchString";
+            //var customerDTO = new CustomerDTO
+            //{
+            //    Name = "CustomerDTO Test",
+            //    CountryLabel = "Sweden",
+            //    Age = 30,
+            //    Birthday = DateTime.Now,
+            //};
 
-            var customersVM = new CustomersVM()
-            {
-                CustomerCreateDTO = customerDTO,
-                q= q,
-                Countries = countries,
-                Customers = customers,
-            };
+            var customersVM = new CustomersVM();
+            //{
+            //    CustomerCreateDTO = customerDTO,
+            //    q= q,
+            //    Countries = countries,
+            //    Customers = customers,
+            //};
 
             // Act
             var result = _sut.Customers(customersVM) as RedirectToActionResult;

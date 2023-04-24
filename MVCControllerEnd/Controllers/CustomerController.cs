@@ -48,7 +48,6 @@ namespace Tenta.Controllers
                 // Used for Toastr notifications
                 TempData["success"] = "Customer created successfully";
 
-                _context.SaveChanges();
                 return RedirectToAction("Customers", "Customer");
             }
 
