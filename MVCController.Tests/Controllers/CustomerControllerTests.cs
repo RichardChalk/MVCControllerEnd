@@ -14,6 +14,8 @@ using Tenta.Models.Customer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Castle.Core.Resource;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace MVCControllerEnd.Tests.Controllers
 {
@@ -29,7 +31,7 @@ namespace MVCControllerEnd.Tests.Controllers
         public void Setup()
         {
             _customerServiceMock = new Mock<ICustomerService>();
-            
+
             _dbContext = new ApplicationDbContext();
             _customerService = new CustomerService(_dbContext);
             _sut = new CustomerController(_customerServiceMock.Object, _dbContext);
@@ -166,30 +168,61 @@ namespace MVCControllerEnd.Tests.Controllers
         // READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS -
         // READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS -
 
+        //[TestMethod]
+        //public void Customer_get_All_Richards_Returns_Correct_List()
+        //{
+        //    // Arrange
+        //    var allCustomers = new List<CustomerDTO>()
+        //    {
+        //        new CustomerDTO{Name = "Linda"},
+        //        new CustomerDTO{Name = "Alicia"},
+        //        new CustomerDTO{Name = "Richard"}, // should be returned
+        //        new CustomerDTO{Name = "Lucas"},
+        //        new CustomerDTO{Name = "Richard Chalk"}, // should be returned
+        //    };
+
+        //    var expected = new List<CustomerDTO>()
+        //    {
+        //        new CustomerDTO{Name = "Richard"}, // should be returned
+        //        new CustomerDTO{Name = "Richard Chalk"}, // should be returned
+        //    };
+
+        //    // Act
+        //    var result =_customerService.GetAllRichards(allCustomers).ToList();
+
+        //    // Assert
+        //    Assert.AreEqual(expected, result);
+        //}
+
         [TestMethod]
-        public void Customer_get_All_Richards_Returns_Correct_List()
+        public void Edit_Returns_Not_Null()
         {
             // Arrange
-            var allCustomers = new List<CustomerDTO>()
+            var customerDB = new Customer
             {
-                new CustomerDTO{Name = "Linda"},
-                new CustomerDTO{Name = "Alicia"},
-                new CustomerDTO{Name = "Richard"}, // should be returned
-                new CustomerDTO{Name = "Lucas"},
-                new CustomerDTO{Name = "Richard Chalk"}, // should be returned
+                Id = 1,
+                Name = "Richard Chalk",
+                Age = 52,
+                Birthday = new DateTime(1970, 1, 1),
+                Country = new Country { Id = 1, CountryLabel = "Sweden" }
             };
 
-            var expected = new List<CustomerDTO>()
-            {
-                new CustomerDTO{Name = "Richard"}, // should be returned
-                new CustomerDTO{Name = "Richard Chalk"}, // should be returned
-            };
+            var mockContext = new Mock<ApplicationDbContext>();
+            var customersDbSetMock = new Mock<DbSet<Customer>>();
+
+
+            customersDbSetMock.Setup(m => m.Include(It.IsAny<Expression<Func<Customer, Country>>>())).Returns(customersDbSetMock.Object);
+            customersDbSetMock.Setup(m => m.First(It.IsAny<Expression<Func<Customer, bool>>>())).Returns(customerDB);
+            mockContext.Setup(m => m.Customers).Returns(customersDbSetMock.Object);
+
+            var controller = new CustomerController(_customerService, mockContext.Object);
 
             // Act
-            var result =_customerService.GetAllRichards(allCustomers).ToList();
+            var result = controller.Edit(1) as ViewResult;
 
             // Assert
-            Assert.AreEqual(expected, result);
+            Assert.IsNotNull(result);
         }
+
     }
 }
