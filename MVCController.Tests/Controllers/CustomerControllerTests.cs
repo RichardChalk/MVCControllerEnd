@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Tenta.Models.Customer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Castle.Core.Resource;
 
 namespace MVCControllerEnd.Tests.Controllers
 {
@@ -20,6 +21,7 @@ namespace MVCControllerEnd.Tests.Controllers
     public class CustomerControllerTests
     {
         private Mock<ICustomerService> _customerServiceMock;
+        private ICustomerService _customerService;
         private ApplicationDbContext _dbContext;
         private CustomerController _sut;
 
@@ -27,21 +29,26 @@ namespace MVCControllerEnd.Tests.Controllers
         public void Setup()
         {
             _customerServiceMock = new Mock<ICustomerService>();
+            
             _dbContext = new ApplicationDbContext();
+            _customerService = new CustomerService(_dbContext);
             _sut = new CustomerController(_customerServiceMock.Object, _dbContext);
 
-            // Set up TempData
+            // Set up TempData - Stack Overflow
             var tempDataProvider = new Mock<ITempDataProvider>();
             var tempDataDictionaryFactory = new TempDataDictionaryFactory(tempDataProvider.Object);
             var tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
             _sut.TempData = tempData;
 
+            // Set up TempData - Chat-gpt
+            //var mockTempData = new Mock<ITempDataDictionary>();
+            //_sut.TempData = mockTempData.Object;
         }
 
-        // Customers -  Customers - Customers - Customers - Customers -
-        // Customers -  Customers - Customers - Customers - Customers -
-        // Customers -  Customers - Customers - Customers - Customers -
-        // Customers -  Customers - Customers - Customers - Customers -
+        // READ -  READ - READ - READ - READ - READ - READ - READ - READ - READ -
+        // READ -  READ - READ - READ - READ - READ - READ - READ - READ - READ -
+        // READ -  READ - READ - READ - READ - READ - READ - READ - READ - READ -
+        // READ -  READ - READ - READ - READ - READ - READ - READ - READ - READ -
         [TestMethod]
         public void Customers_Does_Not_Return_Null()
         {
@@ -110,51 +117,122 @@ namespace MVCControllerEnd.Tests.Controllers
             Assert.AreEqual(model.Countries, countries);
         }
 
-        // CustomersVM POST - CustomersVM POST - CustomersVM POST - CustomersVM POST -  
-        // CustomersVM POST - CustomersVM POST - CustomersVM POST - CustomersVM POST -  
-        // CustomersVM POST - CustomersVM POST - CustomersVM POST - CustomersVM POST -  
-        // CustomersVM POST - CustomersVM POST - CustomersVM POST - CustomersVM POST -  
+        // CREATE - CREATE - CREATE - CREATE - CREATE - CREATE - CREATE - CREATE -
+        // CREATE - CREATE - CREATE - CREATE - CREATE - CREATE - CREATE - CREATE -
+        // CREATE - CREATE - CREATE - CREATE - CREATE - CREATE - CREATE - CREATE -
+        // CREATE - CREATE - CREATE - CREATE - CREATE - CREATE - CREATE - CREATE -
 
         [TestMethod]
-        public void Customers_Post_ValidData_RedirectsToCustomersAction()
+        public void Customers_Post_Does_Not_Return_Null()
         {
             // Arrange
-            //var customers = new List<CustomerDTO>
-            //{
-            //    new CustomerDTO { Name = "Test Customer" }
-            //};
-            //var countries = new List<SelectListItem>
-            //{
-            //    new SelectListItem
-            //    {
-            //        Text = "Text Country",
-            //        Value = "Value Country"
-            //    }
-            //};
-            //var q = "searchString";
-            //var customerDTO = new CustomerDTO
-            //{
-            //    Name = "CustomerDTO Test",
-            //    CountryLabel = "Sweden",
-            //    Age = 30,
-            //    Birthday = DateTime.Now,
-            //};
-
             var customersVM = new CustomersVM();
-            //{
-            //    CustomerCreateDTO = customerDTO,
-            //    q= q,
-            //    Countries = countries,
-            //    Customers = customers,
-            //};
 
             // Act
             var result = _sut.Customers(customersVM) as RedirectToActionResult;
 
             // Assert
             Assert.IsNotNull(result);
-            //Assert.AreEqual("Customers", result.ActionName);
-            //Assert.AreEqual("Customer", result.ControllerName);
         }
+
+        [TestMethod]
+        public void Customers_Post_Returns_Action_Customers()
+        {
+            // Arrange
+            var customersVM = new CustomersVM();
+
+            // Act
+            var result = _sut.Customers(customersVM) as RedirectToActionResult;
+
+            // Assert
+            Assert.AreEqual("Customers", result.ActionName);
+        }
+
+        [TestMethod]
+        public void Customers_Post_Returns_Controller_Customer()
+        {
+            // Arrange
+            var customersVM = new CustomersVM();
+
+            // Act
+            var result = _sut.Customers(customersVM) as RedirectToActionResult;
+
+            // Assert
+            Assert.AreEqual("Customer", result.ControllerName);
+        }
+
+        // READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS -
+        // READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS -
+        // READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS -
+        // READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS -
+
+        [TestMethod]
+        public void Customer_get_All_Richards_Returns_Correct_List()
+        {
+            // Arrange
+            var allCustomers = new List<CustomerDTO>()
+            {
+                new CustomerDTO{Name = "Linda"},
+                new CustomerDTO{Name = "Alicia"},
+                new CustomerDTO{Name = "Richard"}, // should be returned
+                new CustomerDTO{Name = "Lucas"},
+                new CustomerDTO{Name = "Richard Chalk"}, // should be returned
+            };
+
+            var expected = new List<CustomerDTO>()
+            {
+                new CustomerDTO{Name = "Richard"}, // should be returned
+                new CustomerDTO{Name = "Richard Chalk"}, // should be returned
+            };
+
+            // Act
+            var result =_customerService.GetAllRichards(allCustomers).ToList();
+
+            // Assert
+            Assert.AreEqual(expected, result);
+        }
+
+
+        //[TestMethod]
+        //public void Customers_Post_ValidData_RedirectsToCustomersAction()
+        //{
+        // Arrange
+        //var customers = new List<CustomerDTO>
+        //{
+        //    new CustomerDTO { Name = "Test Customer" }
+        //};
+        //var countries = new List<SelectListItem>
+        //{
+        //    new SelectListItem
+        //    {
+        //        Text = "Text Country",
+        //        Value = "Value Country"
+        //    }
+        //};
+        //var q = "searchString";
+        //var customerDTO = new CustomerDTO
+        //{
+        //    Name = "CustomerDTO Test",
+        //    CountryLabel = "Sweden",
+        //    Age = 30,
+        //    Birthday = DateTime.Now,
+        //};
+
+        //var customersVM = new CustomersVM();
+        //{
+        //    CustomerCreateDTO = customerDTO,
+        //    q= q,
+        //    Countries = countries,
+        //    Customers = customers,
+        //};
+
+        // Act
+        //var result = _sut.Customers(customersVM) as RedirectToActionResult;
+
+        // Assert
+        //    Assert.IsNotNull(result);
+        //    Assert.AreEqual("Customers", result.ActionName);
+        //    Assert.AreEqual("Customer", result.ControllerName);
+        //}
     }
 }

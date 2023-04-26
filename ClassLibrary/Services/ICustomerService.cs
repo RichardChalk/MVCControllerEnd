@@ -9,6 +9,7 @@ namespace ClassLibrary.Services
         IEnumerable<CustomerDTO> GetAllCustomers(string q);
         List<SelectListItem> FillCountryDropDown();
         void CreateCustomer(CustomerDTO customerDTO);
+        IEnumerable<CustomerDTO> GetAllRichards(List<CustomerDTO> allCustomers);
     }
 
     

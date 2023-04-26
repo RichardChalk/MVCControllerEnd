@@ -84,19 +84,18 @@ namespace ClassLibrary.Services
         // Get All RICHARDS -  Get All RICHARDS -  Get All RICHARDS -  Get All RICHARDS - 
         // Get All RICHARDS -  Get All RICHARDS -  Get All RICHARDS -  Get All RICHARDS - 
 
-        public IEnumerable<CustomerDTO> GetAllRichards()
+        public IEnumerable<CustomerDTO> GetAllRichards(List<CustomerDTO> allCustomers)
         {
-            var richards = _context.Customers
+            var richards = allCustomers
                 .Where(c=>c.Name.Contains("Richard"))
                 .Select(c => new CustomerDTO
                 {
                     Id = c.Id,
                     Name = c.Name,
-                    CountryLabel = c.Country.CountryLabel,
                     Age = c.Age,
                     Birthday = c.Birthday,
                 });
-            return richards;
+            return richards.ToList();
         }
     }
 }
