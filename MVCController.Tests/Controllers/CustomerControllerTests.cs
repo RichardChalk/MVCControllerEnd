@@ -191,48 +191,5 @@ namespace MVCControllerEnd.Tests.Controllers
             // Assert
             Assert.AreEqual(expected, result);
         }
-
-
-        //[TestMethod]
-        //public void Customers_Post_ValidData_RedirectsToCustomersAction()
-        //{
-        // Arrange
-        //var customers = new List<CustomerDTO>
-        //{
-        //    new CustomerDTO { Name = "Test Customer" }
-        //};
-        //var countries = new List<SelectListItem>
-        //{
-        //    new SelectListItem
-        //    {
-        //        Text = "Text Country",
-        //        Value = "Value Country"
-        //    }
-        //};
-        //var q = "searchString";
-        //var customerDTO = new CustomerDTO
-        //{
-        //    Name = "CustomerDTO Test",
-        //    CountryLabel = "Sweden",
-        //    Age = 30,
-        //    Birthday = DateTime.Now,
-        //};
-
-        //var customersVM = new CustomersVM();
-        //{
-        //    CustomerCreateDTO = customerDTO,
-        //    q= q,
-        //    Countries = countries,
-        //    Customers = customers,
-        //};
-
-        // Act
-        //var result = _sut.Customers(customersVM) as RedirectToActionResult;
-
-        // Assert
-        //    Assert.IsNotNull(result);
-        //    Assert.AreEqual("Customers", result.ActionName);
-        //    Assert.AreEqual("Customer", result.ControllerName);
-        //}
     }
 }
