@@ -1,6 +1,7 @@
 ﻿using ClassLibrary.Services;
 using ClassLibrary.Data;
 using Moq;
+using Moq.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Castle.Core.Resource;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using Microsoft.Data.Sqlite;
 
 namespace MVCControllerEnd.Tests.Controllers
 {
@@ -30,10 +32,26 @@ namespace MVCControllerEnd.Tests.Controllers
         [TestInitialize]
         public void Setup()
         {
-            _customerServiceMock = new Mock<ICustomerService>();
+            // Fixing dbContext
+            var connection = new SqliteConnection("Filename=:memory:");
+            connection.Open();
+            var contextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
+              .UseSqlite(connection)
+              .Options;
 
-            _dbContext = new ApplicationDbContext();
+            var _dbContext = new ApplicationDbContext(contextOptions);
+            _dbContext.Database.EnsureCreated();
+            
+            _dbContext.Countries.Add(new Country { Id = 1, CountryLabel = "SE" });
+            
+            _dbContext.Customers.Add(new Customer { Id = 1, Name = "Richard", CountryId = 1 });
+            _dbContext.Customers.Add(new Customer { Id = 2, Name = "Linda", CountryId = 1 });
+            _dbContext.Customers.Add(new Customer { Id = 3, Name = "Alicia", CountryId = 1 });
+            _dbContext.SaveChanges();
+
+            _customerServiceMock = new Mock<ICustomerService>();
             _customerService = new CustomerService(_dbContext);
+            
             _sut = new CustomerController(_customerServiceMock.Object, _dbContext);
 
             // Set up TempData - Stack Overflow
@@ -168,61 +186,54 @@ namespace MVCControllerEnd.Tests.Controllers
         // READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS -
         // READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS -
 
-        //[TestMethod]
-        //public void Customer_get_All_Richards_Returns_Correct_List()
-        //{
-        //    // Arrange
-        //    var allCustomers = new List<CustomerDTO>()
-        //    {
-        //        new CustomerDTO{Name = "Linda"},
-        //        new CustomerDTO{Name = "Alicia"},
-        //        new CustomerDTO{Name = "Richard"}, // should be returned
-        //        new CustomerDTO{Name = "Lucas"},
-        //        new CustomerDTO{Name = "Richard Chalk"}, // should be returned
-        //    };
+        [TestMethod]
+        public void Customer_get_All_Richards_Returns_Correct_List()
+        {
+            // Arrange
+            var allCustomers = new List<CustomerDTO>()
+            {
+                new CustomerDTO{Name = "Linda"},
+                new CustomerDTO{Name = "Alicia"},
+                new CustomerDTO{Name = "Richard"}, // should be returned
+                new CustomerDTO{Name = "Lucas"},
+                new CustomerDTO{Name = "Richard Chalk"}, // should be returned
+            };
 
-        //    var expected = new List<CustomerDTO>()
-        //    {
-        //        new CustomerDTO{Name = "Richard"}, // should be returned
-        //        new CustomerDTO{Name = "Richard Chalk"}, // should be returned
-        //    };
+            var expected = new List<CustomerDTO>()
+            {
+                new CustomerDTO{Name = "Richard"}, // should be returned
+                new CustomerDTO{Name = "Richard Chalk"}, // should be returned
+            };
 
-        //    // Act
-        //    var result =_customerService.GetAllRichards(allCustomers).ToList();
+            var result = new List<CustomerDTO>()
+            {
+                new CustomerDTO{Name = "Richard"}, // should be returned
+                new CustomerDTO{Name = "Richard Chalk"}, // should be returned
+            };
 
-        //    // Assert
-        //    Assert.AreEqual(expected, result);
-        //}
+            // Testa! Dessa 2 är equivalent!
+            List<int> list1 = new List<int> { 1, 2, 3 };
+            List<int> list2 = new List<int> { 3, 2, 1 };
+
+            // Act
+            // var result = _customerService.GetAllRichards(allCustomers).ToList();
+
+            // Assert
+            CollectionAssert.AreEquivalent(list1, list2); // Yes!
+            CollectionAssert.AreEquivalent(expected, result); // No!
+        }
 
         [TestMethod]
         public void Edit_Returns_Not_Null()
         {
             // Arrange
-            var customerDB = new Customer
-            {
-                Id = 1,
-                Name = "Richard Chalk",
-                Age = 52,
-                Birthday = new DateTime(1970, 1, 1),
-                Country = new Country { Id = 1, CountryLabel = "Sweden" }
-            };
-
-            var mockContext = new Mock<ApplicationDbContext>();
-            var customersDbSetMock = new Mock<DbSet<Customer>>();
-
-
-            customersDbSetMock.Setup(m => m.Include(It.IsAny<Expression<Func<Customer, Country>>>())).Returns(customersDbSetMock.Object);
-            customersDbSetMock.Setup(m => m.First(It.IsAny<Expression<Func<Customer, bool>>>())).Returns(customerDB);
-            mockContext.Setup(m => m.Customers).Returns(customersDbSetMock.Object);
-
-            var controller = new CustomerController(_customerService, mockContext.Object);
+            var customerId = 1;
 
             // Act
-            var result = controller.Edit(1) as ViewResult;
+            var result = _sut.Edit(customerId) as ViewResult;
 
             // Assert
             Assert.IsNotNull(result);
         }
-
     }
 }
