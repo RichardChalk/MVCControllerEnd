@@ -1,7 +1,6 @@
 ﻿using ClassLibrary.Services;
 using ClassLibrary.Data;
 using Moq;
-using Moq.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +24,6 @@ namespace MVCControllerEnd.Tests.Controllers
     public class CustomerControllerTests
     {
         private Mock<ICustomerService> _customerServiceMock;
-        private ICustomerService _customerService;
         private ApplicationDbContext _dbContext;
         private CustomerController _sut;
 
@@ -41,28 +39,25 @@ namespace MVCControllerEnd.Tests.Controllers
 
             var _dbContext = new ApplicationDbContext(contextOptions);
             _dbContext.Database.EnsureCreated();
-            
-            _dbContext.Countries.Add(new Country { Id = 1, CountryLabel = "SE" });
-            
+            _dbContext.Countries.Add(new Country { Id = 1, CountryLabel = "Sweden" });
             _dbContext.Customers.Add(new Customer { Id = 1, Name = "Richard", CountryId = 1 });
             _dbContext.Customers.Add(new Customer { Id = 2, Name = "Linda", CountryId = 1 });
             _dbContext.Customers.Add(new Customer { Id = 3, Name = "Alicia", CountryId = 1 });
             _dbContext.SaveChanges();
 
+            // Set up Dependencies
             _customerServiceMock = new Mock<ICustomerService>();
-            _customerService = new CustomerService(_dbContext);
-            
             _sut = new CustomerController(_customerServiceMock.Object, _dbContext);
 
-            // Set up TempData - Stack Overflow
-            var tempDataProvider = new Mock<ITempDataProvider>();
-            var tempDataDictionaryFactory = new TempDataDictionaryFactory(tempDataProvider.Object);
-            var tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
-            _sut.TempData = tempData;
-
             // Set up TempData - Chat-gpt
-            //var mockTempData = new Mock<ITempDataDictionary>();
-            //_sut.TempData = mockTempData.Object;
+            var mockTempData = new Mock<ITempDataDictionary>();
+            _sut.TempData = mockTempData.Object;
+
+            // Set up TempData - Stack Overflow
+            //var tempDataProvider = new Mock<ITempDataProvider>();
+            //var tempDataDictionaryFactory = new TempDataDictionaryFactory(tempDataProvider.Object);
+            //var tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
+            //_sut.TempData = tempData;
         }
 
         // READ -  READ - READ - READ - READ - READ - READ - READ - READ - READ -
@@ -186,45 +181,50 @@ namespace MVCControllerEnd.Tests.Controllers
         // READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS -
         // READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS -
 
+        //[TestMethod]
+        //public void Customer_get_All_Richards_Returns_Correct_List()
+        //{
+        //    // Arrange
+        //    var allCustomers = new List<CustomerDTO>()
+        //    {
+        //        new CustomerDTO{Name = "Linda"},
+        //        new CustomerDTO{Name = "Alicia"},
+        //        new CustomerDTO{Name = "Richard"}, // should be returned
+        //        new CustomerDTO{Name = "Lucas"},
+        //        new CustomerDTO{Name = "Richard Chalk"}, // should be returned
+        //    };
+
+        //    var expected = new List<CustomerDTO>()
+        //    {
+        //        new CustomerDTO{Name = "Richard"}, // should be returned
+        //        new CustomerDTO{Name = "Richard Chalk"}, // should be returned
+        //    };
+
+        //    var result = new List<CustomerDTO>()
+        //    {
+        //        new CustomerDTO{Name = "Richard"}, // should be returned
+        //        new CustomerDTO{Name = "Richard Chalk"}, // should be returned
+        //    };
+
+        //    // Testa! Dessa 2 är equivalent!
+        //    List<int> list1 = new List<int> { 1, 2, 3 };
+        //    List<int> list2 = new List<int> { 3, 2, 1 };
+
+        //    // Act
+        //    // var result = _customerService.GetAllRichards(allCustomers).ToList();
+
+        //    // Assert
+        //    CollectionAssert.AreEquivalent(list1, list2); // Yes!
+        //    CollectionAssert.AreEquivalent(expected, result); // No!
+        //}
+
+        // EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET -
+        // EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET -
+        // EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET -
+        // EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET -
+
         [TestMethod]
-        public void Customer_get_All_Richards_Returns_Correct_List()
-        {
-            // Arrange
-            var allCustomers = new List<CustomerDTO>()
-            {
-                new CustomerDTO{Name = "Linda"},
-                new CustomerDTO{Name = "Alicia"},
-                new CustomerDTO{Name = "Richard"}, // should be returned
-                new CustomerDTO{Name = "Lucas"},
-                new CustomerDTO{Name = "Richard Chalk"}, // should be returned
-            };
-
-            var expected = new List<CustomerDTO>()
-            {
-                new CustomerDTO{Name = "Richard"}, // should be returned
-                new CustomerDTO{Name = "Richard Chalk"}, // should be returned
-            };
-
-            var result = new List<CustomerDTO>()
-            {
-                new CustomerDTO{Name = "Richard"}, // should be returned
-                new CustomerDTO{Name = "Richard Chalk"}, // should be returned
-            };
-
-            // Testa! Dessa 2 är equivalent!
-            List<int> list1 = new List<int> { 1, 2, 3 };
-            List<int> list2 = new List<int> { 3, 2, 1 };
-
-            // Act
-            // var result = _customerService.GetAllRichards(allCustomers).ToList();
-
-            // Assert
-            CollectionAssert.AreEquivalent(list1, list2); // Yes!
-            CollectionAssert.AreEquivalent(expected, result); // No!
-        }
-
-        [TestMethod]
-        public void Edit_Returns_Not_Null()
+        public void Edit_Get_Returns_Not_Null()
         {
             // Arrange
             var customerId = 1;
@@ -234,6 +234,243 @@ namespace MVCControllerEnd.Tests.Controllers
 
             // Assert
             Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        public void Edit_Get_Returns_ModelType_CustomerVM()
+        {
+            // Arrange
+            var customerId = 1;
+
+            // Act
+            var result = _sut.Edit(customerId) as ViewResult;
+
+            // Assert
+            Assert.IsInstanceOfType(result.ViewData.Model, typeof(CustomerVM));
+        }
+
+        [TestMethod]
+        public void Edit_Get_Returns_List_Of_Countries()
+        {
+            // Arrange
+            var customerId = 1;
+            var countries = new List<SelectListItem>
+            {
+                new SelectListItem
+                {
+                    Text = "Text Country",
+                    Value = "Value Country"
+                }
+            };
+            _customerServiceMock.Setup(x => x.FillCountryDropDown()).Returns(countries);
+
+            // Act
+            var result = _sut.Edit(customerId) as ViewResult;
+
+            // Assert
+            var model = result.ViewData.Model as CustomerVM;
+            Assert.AreEqual(model.Countries, countries);
+        }
+
+        // EDIT POST - EDIT POST - EDIT POST - EDIT POST - EDIT POST - EDIT POST -
+        // EDIT POST - EDIT POST - EDIT POST - EDIT POST - EDIT POST - EDIT POST -
+        // EDIT POST - EDIT POST - EDIT POST - EDIT POST - EDIT POST - EDIT POST -
+        // EDIT POST - EDIT POST - EDIT POST - EDIT POST - EDIT POST - EDIT POST -
+
+        [TestMethod]
+        public void Edit_Post_Does_Not_Return_Null()
+        {
+            // Arrange
+            var customerVM = new CustomerVM()
+            {
+                Id = 1,
+                Name = "Richard",
+                CountryLabel = "Sweden",
+                Countries = new List<SelectListItem>
+            {
+                new SelectListItem
+                {
+                    Text = "Text Country",
+                    Value = "Value Country"
+                }
+            },
+                Age = 52,
+                Birthday = DateTime.Now,
+            };
+
+            var customerId = 1;
+
+            // Act
+            var result = _sut.Edit(customerId, customerVM) as RedirectToActionResult;
+
+            // Assert
+            Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        public void Edit_Post_Returns_Action_Customers()
+        {
+            // Arrange
+            var customerVM = new CustomerVM()
+            {
+                Id = 1,
+                Name = "Richard",
+                CountryLabel = "Sweden",
+                Countries = new List<SelectListItem>
+            {
+                new SelectListItem
+                {
+                    Text = "Text Country",
+                    Value = "Value Country"
+                }
+            },
+                Age = 52,
+                Birthday = DateTime.Now,
+            };
+
+            var customerId = 1;
+
+            // Act
+            var result = _sut.Edit(customerId, customerVM) as RedirectToActionResult;
+
+            // Assert
+            Assert.AreEqual("Customers", result.ActionName);
+        }
+
+        [TestMethod]
+        public void Edit_Post_Returns_Controller_Customer()
+        {
+            // Arrange
+            var customerVM = new CustomerVM()
+            {
+                Id = 1,
+                Name = "Richard",
+                CountryLabel = "Sweden",
+                Countries = new List<SelectListItem>
+            {
+                new SelectListItem
+                {
+                    Text = "Text Country",
+                    Value = "Value Country"
+                }
+            },
+                Age = 52,
+                Birthday = DateTime.Now,
+            };
+
+            var customerId = 1;
+
+            // Act
+            var result = _sut.Edit(customerId, customerVM) as RedirectToActionResult;
+
+            // Assert
+            Assert.AreEqual("Customer", result.ControllerName);
+        }
+
+        // DETAILS -  DETAILS - DETAILS - DETAILS - DETAILS - DETAILS - DETAILS - DETAILS -
+        // DETAILS -  DETAILS - DETAILS - DETAILS - DETAILS - DETAILS - DETAILS - DETAILS -
+        // DETAILS -  DETAILS - DETAILS - DETAILS - DETAILS - DETAILS - DETAILS - DETAILS -
+        // DETAILS -  DETAILS - DETAILS - DETAILS - DETAILS - DETAILS - DETAILS - DETAILS -
+
+        [TestMethod]
+        public void Details_Does_Not_Return_Null()
+        {
+            // Arrange
+            var customerId = 1;
+
+            // Act
+            var result = _sut.Details(customerId) as ViewResult;
+
+            // Assert
+            Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        public void Details_Returns_ModelType_CustomerVM()
+        {
+            // Arrange
+            var customerId = 1;
+
+            // Act
+            var result = _sut.Details(customerId) as ViewResult;
+
+            // Assert
+            Assert.IsInstanceOfType(result.ViewData.Model, typeof(CustomerVM));
+        }
+
+        // DELETE GET - DELETE GET - DELETE GET - DELETE GET - DELETE GET - DELETE GET -
+        // DELETE GET - DELETE GET - DELETE GET - DELETE GET - DELETE GET - DELETE GET -
+        // DELETE GET - DELETE GET - DELETE GET - DELETE GET - DELETE GET - DELETE GET -
+        // DELETE GET - DELETE GET - DELETE GET - DELETE GET - DELETE GET - DELETE GET -
+
+        [TestMethod]
+        public void Delete_Get_Returns_Not_Null()
+        {
+            // Arrange
+            var customerId = 1;
+
+            // Act
+            var result = _sut.Delete(customerId) as ViewResult;
+
+            // Assert
+            Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        public void Delete_Get_Returns_ModelType_CustomerVM()
+        {
+            // Arrange
+            var customerId = 1;
+
+            // Act
+            var result = _sut.Delete(customerId) as ViewResult;
+
+            // Assert
+            Assert.IsInstanceOfType(result.ViewData.Model, typeof(CustomerVM));
+        }
+
+        // DELETE POST - DELETE POST - DELETE POST - DELETE POST - DELETE POST -
+        // DELETE POST - DELETE POST - DELETE POST - DELETE POST - DELETE POST -
+        // DELETE POST - DELETE POST - DELETE POST - DELETE POST - DELETE POST -
+        // DELETE POST - DELETE POST - DELETE POST - DELETE POST - DELETE POST -
+
+        [TestMethod]
+        public void Delete_Post_Does_Not_Return_Null()
+        {
+            // Arrange
+            var customerId = 1;
+
+            // Act
+            var result = _sut.DeleteCustomer(customerId) as RedirectToActionResult;
+
+            // Assert
+            Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        public void Delete_Post_Returns_Action_Customers()
+        {
+            // Arrange
+            var customerId = 1;
+
+            // Act
+            var result = _sut.DeleteCustomer(customerId) as RedirectToActionResult;
+
+            // Assert
+            Assert.AreEqual("Customers", result.ActionName);
+        }
+
+        [TestMethod]
+        public void Delete_Post_Returns_Controller_Customer()
+        {
+            // Arrange
+            var customerId = 1;
+
+            // Act
+            var result = _sut.DeleteCustomer(customerId) as RedirectToActionResult;
+
+            // Assert
+            Assert.AreEqual("Customer", result.ControllerName);
         }
     }
 }
