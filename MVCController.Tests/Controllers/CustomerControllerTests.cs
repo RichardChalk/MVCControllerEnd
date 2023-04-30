@@ -176,53 +176,6 @@ namespace MVCControllerEnd.Tests.Controllers
             Assert.AreEqual("Customer", result.ControllerName);
         }
 
-        // READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS -
-        // READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS -
-        // READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS -
-        // READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS - READ ALL RICHARDS -
-
-        //[TestMethod]
-        //public void Customer_get_All_Richards_Returns_Correct_List()
-        //{
-        //    // Arrange
-        //    var allCustomers = new List<CustomerDTO>()
-        //    {
-        //        new CustomerDTO{Name = "Linda"},
-        //        new CustomerDTO{Name = "Alicia"},
-        //        new CustomerDTO{Name = "Richard"}, // should be returned
-        //        new CustomerDTO{Name = "Lucas"},
-        //        new CustomerDTO{Name = "Richard Chalk"}, // should be returned
-        //    };
-
-        //    var expected = new List<CustomerDTO>()
-        //    {
-        //        new CustomerDTO{Name = "Richard"}, // should be returned
-        //        new CustomerDTO{Name = "Richard Chalk"}, // should be returned
-        //    };
-
-        //    var result = new List<CustomerDTO>()
-        //    {
-        //        new CustomerDTO{Name = "Richard"}, // should be returned
-        //        new CustomerDTO{Name = "Richard Chalk"}, // should be returned
-        //    };
-
-        //    // Testa! Dessa 2 är equivalent!
-        //    List<int> list1 = new List<int> { 1, 2, 3 };
-        //    List<int> list2 = new List<int> { 3, 2, 1 };
-
-        //    // Act
-        //    // var result = _customerService.GetAllRichards(allCustomers).ToList();
-
-        //    // Assert
-        //    CollectionAssert.AreEquivalent(list1, list2); // Yes!
-        //    CollectionAssert.AreEquivalent(expected, result); // No!
-        //}
-
-        // EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET -
-        // EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET -
-        // EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET -
-        // EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET - EDIT GET -
-
         [TestMethod]
         public void Edit_Get_Returns_Not_Null()
         {
